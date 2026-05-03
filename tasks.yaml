@@ -32,3 +32,36 @@ spec:
           # Delete files and directories starting with .. plus any other character
           rm -rf "${WORKSPACE_SOURCE_PATH}"/..?*
         fi
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: npminstall
+spec:
+  steps:
+    - name: install
+      image: node:20-buster-slim
+      script: |
+        set -e
+        echo "***** Environment *****"
+        npm --version
+        pwd
+
+        echo "***** Cleaning npm cache *****"
+        npm cache clean --force
+
+        echo "***** Running npm install *****"
+        npm install
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: jasmine
+spec:
+  steps:
+    - name: test
+      image: node:20-buster-slim
+      script: |
+        set -e
+        echo "***** Running jasminetests *****"
+        npx jasmine
