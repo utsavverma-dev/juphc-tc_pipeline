@@ -34,3 +34,24 @@ spec:
         value: $(params.branch)
       runAfter:
         - init
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-build-deploy
+spec:
+  tasks:
+    - name: npminstall
+      taskRef:
+        name: npminstall
+
+    - name: tests
+      taskRef:
+        name: jasmine
+      runAfter:
+        - npminstall
+
+    - name: build
+      taskRef:
+        name: build-task
+      runAfter:
+        - tests
